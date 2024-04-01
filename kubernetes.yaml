@@ -54,12 +54,10 @@ metadata:
   namespace: chronicle
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
     - match: Host(`chronicle.eudaimonia.io`)
       kind: Rule
       services:
         - name: chronicle
           port: 80
-  tls:
-    secretName: chronicle.eudaimonia.io-tls
