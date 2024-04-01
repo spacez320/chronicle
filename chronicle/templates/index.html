@@ -1,13 +1,52 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <style type="text/css">
+      th.dataTblTitle {
+        text-align: center
+      }
+
+      #data {
+        margin-top: 1em;
+      }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
   </head>
 
   <body>
-    Hello, this is the index page.
-  </body>
+    <div>
+      <form id="player">
+        <label>
+          Guardian ID
+          <input name="id" type="text" />
+        </label>
+        <label>
+          Guardian Class
+          <select name="class">
+            <option value="warlock">Warlock</option>
+            <option value="titan">Titan</option>
+            <option value="hunter">Hunter</option>
+          </select>
+        </label>
+        <label>
+          Membership Type
+          <select name="membership">
+            <option value="psn">Playstation</option>
+            <option value="steam">Steam</option>
+            <option value="xbox">XBox</option>
+          </select>
+        </label>
+      </form>
 
-  <div hx-get="/history">
-    Click to call history ...
-  </div>
+      <div id="controls">
+        <button hx-post="/history" hx-target="#data" hx-include="#player">History</button>
+        <button hx-post="/weapons" hx-target="#data" hx-include="#player">Weapons</button>
+      </div>
+    </div>
+
+    <div id="data">
+      Click a button ...
+    </div>
+  </body>
 </html>

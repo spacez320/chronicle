@@ -15,7 +15,7 @@ PLAYER_MEMBERSHIP_TYPE = aiobungie.MembershipType.PSN
 PLAYER_NAME = os.getenv("PLAYER_NAME")
 
 
-chronicle = Chronicle(BUNGIE_API_KEY, PLAYER_NAME, PLAYER_CODE, PLAYER_MEMBERSHIP_TYPE)
+chronicle = Chronicle(BUNGIE_API_KEY)
 
 
 # Set-up logging.

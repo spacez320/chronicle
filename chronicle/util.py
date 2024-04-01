@@ -2,11 +2,47 @@
 Utility functions.
 """
 
+from dominate.tags import table, td, th, tr
 from rich.console import Console
 from rich.table import Table
 
 
-def create_table(data, title, columns=None):
+def create_html_table(data, title, columns=None):
+    """Prints an HTML table from an arbitrary object or dictionary."""
+    t = table()
+
+    columns = (
+        (
+            data[0].keys()
+            if type(data[0]) is dict
+            else [k for k in dir(data[0]) if not k.startswith("_")]
+        )
+        if columns is None
+        else columns
+    )
+
+    # Create the title row.
+    t += tr(th(title, cls="dataTblTitle", colspan=len(columns)))
+
+    # Create the header row.
+    t_header = tr()
+    for column in columns:
+        t_header += th(column)
+    t += t_header
+
+    # Create the data rows.
+    for dat in data:
+        t_row = tr()
+        if type(dat) is dict:
+            t_row += [td(d) for d in dat.values()]
+        else:
+            t_row += [td(str(getattr(dat, column))) for column in columns]
+        t += t_row
+
+    return str(t)
+
+
+def create_rich_table(data, title, columns=None):
     """Prints a rich table from an arbitrary object or dictionary."""
     console = Console()
     table = Table(title=title)

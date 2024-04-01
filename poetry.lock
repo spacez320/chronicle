@@ -229,6 +229,18 @@ files = [
 ]
 
 [[package]]
+name = "dominate"
+version = "2.9.1"
+description = "Dominate is a Python library for creating and manipulating HTML documents using an elegant DOM API."
+category = "main"
+optional = false
+python-versions = ">=3.4"
+files = [
+    {file = "dominate-2.9.1-py2.py3-none-any.whl", hash = "sha256:cb7b6b79d33b15ae0a6e87856b984879927c7c2ebb29522df4c75b28ffd9b989"},
+    {file = "dominate-2.9.1.tar.gz", hash = "sha256:558284687d9b8aae1904e3d6051ad132dd4a8c0cf551b37ea4e7e42a31d19dc4"},
+]
+
+[[package]]
 name = "flask"
 version = "3.0.2"
 description = "A simple framework for building complex web applications."
@@ -742,4 +754,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7d64ce712f378b51623af070b7d6117f30b5feae7576c11438bb98c57658897f"
+content-hash = "3dbb8c66652949ec944236cd662485a3b6e274020d891d905090ab2eef46f53f"

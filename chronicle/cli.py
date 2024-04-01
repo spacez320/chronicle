@@ -5,7 +5,8 @@ Set-up for Chronicle CLI.
 import asyncio
 import click
 
-from chronicle.util import create_table
+from chronicle.chronicle import Chronicle
+from chronicle.util import create_rich_table
 
 
 def init_cli(chronicle):
@@ -24,22 +25,11 @@ def init_cli(chronicle):
     )
     def history(guardian_class):
         """Gets various historical stats."""
-
-        def _map_history(i):
-            """Munge history output into something displayable."""
-            return {
-                "basic": i["basic"]["displayValue"],
-                "pga": i["pga"]["displayValue"] if "pga" in i else "n/a",
-                "statId": i["statId"],
-            }
-
         history = asyncio.run(chronicle.get_player_history(guardian_class))
 
         for activity_mode in history:
-            create_table(
-                list(
-                    map(_map_history, list(history[activity_mode]["allTime"].values()))
-                ),
+            create_rich_table(
+                Chronicle.player_history_activity_mode_to_list(history, activity_mode),
                 activity_mode.title(),
             )
 
@@ -53,7 +43,7 @@ def init_cli(chronicle):
     def weapons(guardian_class):
         """Gets weapons usage."""
         weapons = asyncio.run(chronicle.get_weapons_by_class(guardian_class))
-        create_table(weapons, "Weapons")
+        create_rich_table(weapons, "Weapons")
 
     cli.add_command(weapons)
     cli.add_command(history)

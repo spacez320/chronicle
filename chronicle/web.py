@@ -2,7 +2,11 @@
 Web functions.
 """
 
-from flask import render_template
+import asyncio
+from flask import render_template, request
+
+from chronicle.chronicle import Chronicle
+from chronicle.util import create_html_table
 
 
 def init_web(app, chronicle):
@@ -10,10 +14,34 @@ def init_web(app, chronicle):
     def hello():
         return render_template("index.html")
 
-    @app.route("/history")
+    @app.route("/history", methods=["POST"])
     def history():
-        return "<div>History called!</div>"
+        """Gets various historical stats."""
+        player_name, player_code = request.form["id"].split("#")
+        player_class = request.form["class"]
+        player_membership_type = request.form["membership"]
 
-    @app.route("/weapons")
+        chronicle.init_player(player_name, player_code, player_membership_type)
+        history = asyncio.run(chronicle.get_player_history(player_class))
+
+        template = ""
+        for activity_mode in history:
+            template += create_html_table(
+                Chronicle.player_history_activity_mode_to_list(history, activity_mode),
+                activity_mode.title(),
+            )
+
+        return template
+
+    @app.route("/weapons", methods=["POST"])
     def weapons():
-        return "<div>Weapons called!</div>"
+        """Gets weapon usage."""
+        player_name, player_code = request.form["id"].split("#")
+        player_class = request.form["class"]
+        player_membership_type = request.form["membership"]
+
+        chronicle.init_player(player_name, player_code, player_membership_type)
+
+        return create_html_table(
+            asyncio.run(chronicle.get_weapons_by_class(player_class)), "Weapons"
+        )
