@@ -28,3 +28,38 @@ spec:
           image: spacez320/chronicle:latest
           ports:
             - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  ports:
+    - name: flask
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: chronicle
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`chronicle.eudaimonia.io`)
+      kind: Rule
+      services:
+        - name: chronicle
+          port: 80
+  tls:
+    secretName: chronicle.eudaimonia.io-tls
