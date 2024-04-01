@@ -1,28 +1,65 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
     <style type="text/css">
+      .footer {
+        font-size: 0.75em;
+        text-align: center;
+      }
+
+      body {
+        max-width: 50em;
+        padding: 20px;
+      }
+
+      code.error {
+        font-size: 0.75em;
+      }
+
+      hr {
+        margin-bottom: 2em;
+        margin-top: 2em;
+      }
+
       th.dataTblTitle {
-        text-align: center
+        text-align: center;
       }
 
       #data {
         margin-top: 1em;
       }
     </style>
-    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
-    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
   </head>
 
   <body>
     <div>
+      <p>
+        This is <a href="https://eudaimonia.io">spacez320's</a> Destiny app,
+        <a href="https://www.bungie.net/en/Application/Detail/50357">Chronicle</a>.
+      </p>
+      <p>
+        <ul>
+          <li>It assumes you only have one Warlock, Hunter, or Titan.</li>
+          <li>If something doesn't work, try changing the Membership Type.</li>
+          <li>Copy-paste errors below, along with your Guardian info, and <a href="https://github.com/spacez320/chronicle/issues">file an issue</a>.</li>
+          <li>When you click the button, give it a second.</li>
+        </ul>
+      </p>
+    </div>
+
+    <hr />
+
+    <div>
       <form id="player">
         <label>
-          Guardian ID
+          Guardian ID:&nbsp;
           <input name="id" type="text" />
         </label>
         <label>
-          Guardian Class
+          Guardian Class:&nbsp;
           <select name="class">
             <option value="warlock">Warlock</option>
             <option value="titan">Titan</option>
@@ -30,7 +67,7 @@
           </select>
         </label>
         <label>
-          Membership Type
+          Membership Type:&nbsp;
           <select name="membership">
             <option value="psn">Playstation</option>
             <option value="steam">Steam</option>
@@ -45,8 +82,24 @@
       </div>
     </div>
 
+    <hr />
+
     <div id="data">
       Click a button ...
     </div>
+
+    <hr />
+    <div class="footer">
+      This website does not store any information.
+      <br />
+      The code is here:
+      <a href="https://github.com/spacez320/chronicle">https://github.com/spacez320/chronicle</a>.
+      <br />
+      It uses:
+      <a href="https://github.com/oxalorg/sakura">Sakura</a>,
+      <a href="https://htmx.org/">htmx</a>,
+      <a href="https://flask.palletsprojects.com/en/3.0.x/">Flask</a>,
+      and <a href="https://pypi.org/project/aiobungie/">aiobungie</a>.
+    </p>
   </body>
 </html>

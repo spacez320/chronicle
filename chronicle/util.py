@@ -2,9 +2,20 @@
 Utility functions.
 """
 
-from dominate.tags import table, td, th, tr
+import traceback
+
+from dominate.tags import code, p, table, td, th, tr
 from rich.console import Console
 from rich.table import Table
+
+
+def create_html_error(error):
+    """Prints a Python Error or Exception."""
+    return str(p("Sorry, there was an error. 😞")) + str(
+        code(
+            "".join(traceback.format_tb(error.__traceback__)) + str(error), cls="error"
+        )
+    )
 
 
 def create_html_table(data, title, columns=None):
