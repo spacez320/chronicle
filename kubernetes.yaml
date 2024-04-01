@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chronicle
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chronicle
+  template:
+    metadata:
+      labels:
+        app: chronicle
+    spec:
+      containers:
+        - name: chronicle
+          image: spacez320/chronicle:latest
+          ports:
+            - containerPort: 5000
