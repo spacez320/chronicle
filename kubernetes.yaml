@@ -22,6 +22,9 @@ spec:
     spec:
       containers:
         - name: chronicle
+          envFrom:
+            - secretRef:
+                name: bungie-api-key
           image: spacez320/chronicle:latest
           ports:
             - containerPort: 5000
