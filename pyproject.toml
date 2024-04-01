@@ -6,11 +6,13 @@ authors = ["Matthew Coleman <matthew@eudaimonia.io>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-# aiobungie = "^0.2.8"
-aiobungie = {path = "../../others/nxtlo/aiobungie", develop = true}
-rich = "^13.7.0"
+# aiobungie = {path = "../../others/nxtlo/aiobungie", develop = true}
+aiobungie = "^0.2.8"
 click = "^8.1.7"
+python = "^3.11"
+rich = "^13.7.0"
+flask = "^3.0.2"
+dominate = "^2.9.1"
 
 [build-system]
 requires = ["poetry-core"]

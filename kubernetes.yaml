@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chronicle
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chronicle
+  template:
+    metadata:
+      labels:
+        app: chronicle
+    spec:
+      containers:
+        - name: chronicle
+          envFrom:
+            - secretRef:
+                name: bungie-api-key
+          image: spacez320/chronicle:latest
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  ports:
+    - name: flask
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: chronicle
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  labels:
+    app: chronicle
+  name: chronicle
+  namespace: chronicle
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`chronicle.eudaimonia.io`)
+      kind: Rule
+      services:
+        - name: chronicle
+          port: 80

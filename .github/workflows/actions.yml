@@ -1,0 +1,40 @@
+name: Chronicle
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        env:
+          DOCKER_HUB_USERNAME: spacez320
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: |
+          docker login --password $DOCKER_HUB_TOKEN --username $DOCKER_HUB_USERNAME
+          docker build --tag spacez320/chronicle:latest .
+          docker push spacez320/chronicle:latest
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Kubernetes
+        env:
+          BUNGIE_API_KEY: ${{ secrets.BUNGIE_API_KEY }}
+          KUBERNETES_BEARER_TOKEN: ${{ secrets.KUBERNETES_BEARER_TOKEN }}
+          KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
+        run: |
+          kubectl \
+            --insecure-skip-tls-verify=true \
+            --server $KUBERNETES_SERVER \
+            --token $KUBERNETES_BEARER_TOKEN \
+            apply \
+            --filename kubernetes.yaml
+          # Create the necessary secrets and assume success.
+          kubectl \
+            --insecure-skip-tls-verify=true \
+            --server $KUBERNETES_SERVER \
+            --token $KUBERNETES_BEARER_TOKEN \
+            create secret generic bungie-api-key \
+            --from-literal=BUNGIE_API_KEY=$BUNGIE_API_KEY \
+            --namespace chronicle || true
