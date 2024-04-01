@@ -5,11 +5,6 @@
 
     <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
     <style type="text/css">
-      .footer {
-        font-size: 0.75em;
-        text-align: center;
-      }
-
       body {
         max-width: 50em;
         padding: 20px;
@@ -24,12 +19,29 @@
         margin-top: 2em;
       }
 
+      img#ghost {
+        margin-bottom: 0;
+      }
+
       th.dataTblTitle {
         text-align: center;
       }
 
-      #data {
-        margin-top: 1em;
+      .footer {
+        font-size: 0.75em;
+        text-align: center;
+      }
+
+      .indicator {
+        display: none;
+      }
+
+      .htmx-request.indicator {
+        display: inline;
+      }
+
+      #loader {
+        text-align: center;
       }
     </style>
   </head>
@@ -77,16 +89,15 @@
       </form>
 
       <div id="controls">
-        <button hx-post="/history" hx-target="#data" hx-include="#player">History</button>
-        <button hx-post="/weapons" hx-target="#data" hx-include="#player">Weapons</button>
+        <button hx-post="/history" hx-target="#data" hx-include="#player" hx-indicator="#ghost">History</button>
+        <button hx-post="/weapons" hx-target="#data" hx-include="#player" hx-indicator="#ghost">Weapons</button>
       </div>
     </div>
 
     <hr />
 
-    <div id="data">
-      Click a button ...
-    </div>
+    <div id="loader"><img id="ghost" class="indicator" src="static/ghost.gif" /></div>
+    <div id="data"></div>
 
     <hr />
     <div class="footer">
