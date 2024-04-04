@@ -42,6 +42,8 @@ def init_web(app, chronicle):
     @app.route("/weapons", methods=["POST"])
     def weapons():
         """Gets weapon usage."""
+        template = ""
+
         try:
             player_name, player_code = request.form["id"].split("#")
             player_class = request.form["class"]
@@ -49,8 +51,17 @@ def init_web(app, chronicle):
 
             chronicle.init_player(player_name, player_code, player_membership_type)
 
-            return create_html_table(
-                asyncio.run(chronicle.get_weapons_by_class(player_class)), "Weapons"
+            weapons = asyncio.run(chronicle.get_unique_weapon_history(player_class))
+            weapon_names = asyncio.run(
+                chronicle.get_weapons_from_reference_ids(
+                    [weapon.reference_id for weapon in weapons]
+                )
+            )
+
+            template = create_html_table(
+                weapons, "Weapons", extra=[{"name": name} for name in weapon_names]
             )
         except Exception as e:
-            return create_html_error(e)
+            template = create_html_error(e)
+
+        return template
