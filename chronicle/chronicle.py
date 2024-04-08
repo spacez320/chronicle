@@ -1,6 +1,10 @@
 import aiobungie
 import asyncio
 import datetime
+from structlog import get_logger
+
+
+logger = get_logger()
 
 
 class Guardian:
@@ -12,8 +16,29 @@ class Guardian:
         self.code = code
         self.membership_type = Guardian.get_membership_type_from_str(membership_type)
 
+        logger.debug(
+            "Building clients",
+            name=self.name,
+            code=self.code,
+            membership=self.membership_type,
+        )
+
         self.player = asyncio.run(self._get_player())
         self.player_profile = asyncio.run(self._get_player_profile())
+
+    def __repr__(self):
+        return "Guardian({})".format(
+            ",".join(
+                [
+                    f"{k}={v}"
+                    for k, v in {
+                        "Name": self.name,
+                        "Code": self.code,
+                        "Membership": self.membership_type,
+                    }.items()
+                ]
+            )
+        )
 
     @staticmethod
     def get_class_from_str(guardian_class):
@@ -38,8 +63,15 @@ class Guardian:
 
     async def _get_player(self):
         """Fetch a player."""
+        logger.debug(
+            "Fetching membership",
+            name=self.name,
+            code=self.code,
+            membership_type=self.membership_type,
+        )
+
         async with self.client.rest:
-            player = await self.client.fetch_player(
+            player = await self.client.fetch_membership(
                 self.name, self.code, self.membership_type
             )
 
@@ -48,10 +80,20 @@ class Guardian:
     async def _get_player_profile(self):
         """Fetch a player profile."""
         async with self.client.rest:
+            logger.debug(
+                "Fetching player profile",
+                name=self.name,
+                code=self.code,
+                membership_type=self.membership_type,
+            )
+
             player_profile = await self.client.fetch_profile(
                 self.player.id,
                 self.membership_type,
-                components=[aiobungie.ComponentType.CHARACTERS],
+                components=[
+                    aiobungie.ComponentType.CHARACTERS,
+                    aiobungie.ComponentType.PROFILE_INVENTORIES,
+                ],
             )
 
         return player_profile
@@ -69,6 +111,8 @@ class Chronicle:
         self.player = Guardian(
             player_name, player_code, player_membership_type, self.client
         )
+
+        logger.debug("Player character initialized", player=self.player)
 
     @staticmethod
     def player_history_activity_mode_to_list(history, activity_mode):
@@ -107,7 +151,7 @@ class Chronicle:
 
         return history
 
-    async def get_weapons_by_class(self, guardian_class):
+    async def get_unique_weapon_history(self, guardian_class):
         """Fetch weapon data for a specific player class."""
         character = next(
             filter(
@@ -117,9 +161,21 @@ class Chronicle:
             )
         )
 
+        # Look-up unique weapon stats.
         async with self.client.rest:
             weapons = await self.client.fetch_unique_weapon_history(
                 self.player.player.id, character.id, self.player.membership_type
             )
+
+        return weapons
+
+    async def get_weapons_from_reference_ids(self, reference_ids):
+        """Fetches weapon names from a list of weapon reference ids."""
+        weapons = []
+
+        async with self.rest_client:
+            for r in reference_ids:
+                weapon_r = await self.rest_client.fetch_inventory_item(r)
+                weapons.append(weapon_r["displayProperties"]["name"])
 
         return weapons
