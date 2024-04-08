@@ -6,6 +6,7 @@ import asyncio
 from flask import render_template, request
 
 from chronicle.chronicle import Chronicle
+from chronicle.data import Data
 from chronicle.util import create_html_error, create_html_table
 
 
@@ -29,10 +30,13 @@ def init_web(app, chronicle):
 
             for activity_mode in history:
                 template += create_html_table(
-                    Chronicle.player_history_activity_mode_to_list(
-                        history, activity_mode
-                    ),
                     activity_mode.title(),
+                    Data(
+                        activity_mode,
+                        Chronicle.player_history_activity_mode_to_list(
+                            history, activity_mode
+                        ),
+                    ),
                 )
         except Exception as e:
             template = create_html_error(e)
@@ -58,9 +62,20 @@ def init_web(app, chronicle):
                 )
             )
 
-            template = create_html_table(
-                weapons, "Weapons", extra=[{"name": name} for name in weapon_names]
+            data = Data(
+                "weapons",
+                weapons,
+                columns=["kills", "precision_kills"],
             )
+            data.join([{"name": weapon_name} for weapon_name in weapon_names])
+            data.join(
+                [
+                    {"precision_kills_percentage": weapon.precision_kills_percentage[0]}
+                    for weapon in weapons
+                ]
+            )
+
+            template = create_html_table("Weapons", data)
         except Exception as e:
             template = create_html_error(e)
 

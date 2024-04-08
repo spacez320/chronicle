@@ -7,6 +7,7 @@ import click
 import os
 
 from chronicle.chronicle import Chronicle
+from chronicle.data import Data
 from chronicle.util import create_rich_table
 
 
@@ -38,8 +39,13 @@ def init_cli(chronicle):
 
         for activity_mode in history:
             create_rich_table(
-                Chronicle.player_history_activity_mode_to_list(history, activity_mode),
                 activity_mode.title(),
+                Data(
+                    activity_mode,
+                    Chronicle.player_history_activity_mode_to_list(
+                        history, activity_mode
+                    ),
+                ),
             )
 
     @click.command()
@@ -58,9 +64,20 @@ def init_cli(chronicle):
             )
         )
 
-        create_rich_table(
-            weapons, "Weapons", extra=[{"name": name} for name in weapon_names]
+        data = Data(
+            "weapons",
+            weapons,
+            columns=["kills", "precision_kills"],
         )
+        data.join([{"name": weapon_name} for weapon_name in weapon_names])
+        data.join(
+            [
+                {"precision_kills_percentage": weapon.precision_kills_percentage[0]}
+                for weapon in weapons
+            ]
+        )
+
+        create_rich_table("Unique Weapons", data)
 
     cli.add_command(weapons)
     cli.add_command(history)
